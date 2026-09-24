@@ -38,7 +38,7 @@ export default async function tasksRoutes(app) {
         );
         return reply.status(201).send(task);
     });
-}
+
 app.patch('/api/tasks/:id', async (request, reply) => {
     const { id } = request.params;
     const { completed, title, dueDate } = request.body ?? {};
@@ -75,3 +75,14 @@ app.patch('/api/tasks/:id', async (request, reply) => {
     );
     return reply.send(task);
 });
+// DELETE /api/tasks/:id
+app.delete('/api/tasks/:id', async (request, reply) => {
+    const { id } = request.params;
+    const [result] = await pool.query('DELETE FROM tasks WHERE id = ?', [id]);
+    if (result.affectedRows === 0) {
+        return reply.status(404).send({ message: 'Tarefa não encontrada.' });
+    }
+    return reply.status(204).send();
+});
+
+}
